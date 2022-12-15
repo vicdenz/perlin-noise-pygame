@@ -88,28 +88,28 @@ class GNoise:
                 pygame.draw.aaline(screen, (255, 0, 0), (x_offset+row*size, y_offset+col*size), (x_offset+row*size + x*size, y_offset+col*size + y*size))
                 pygame.draw.circle(screen, (255, 0, 0), (x_offset+row*size + x*size, y_offset+col*size + y*size), 2)
 
-    def generate_noise(self, size, func):#the number of values between cells
-        noise_grid = np.zeros((self.rows*size, self.columns*size))
+    def generate_noise(self, rows, columns, size, func=lambda x:x, offset=[0, 0]):#offset: coordinates[x, y], size: # of values between cells, func: mutation to noise
+        noise_grid = np.zeros((rows*size, columns*size))
 
         for row in range(noise_grid.shape[0]):
             for col in range(noise_grid.shape[1]):
-                noise_grid[row][col] = func(self.noise(col/size, row/size))
+                noise_grid[row][col] = func(self.noise(col/size+offset[0], row/size+offset[1]))
     
         return noise_grid
 
-def draw_noise(screen, grid, offset):
+def draw_noise(screen, grid, offset, size=1):
     x, y = offset
 
     for row in range(grid.shape[0]):
         for col in range(grid.shape[1]):
             color = int((grid[row][col]*0.5+0.5)*255)
-            pygame.draw.rect(screen, (color, color, color), (x+col, y+row, 1, 1))
+            pygame.draw.rect(screen, (color, color, color), (x+col*size, y+row*size, size, size))
     
 def redrawGameWindow(screen):
     screen.fill((0, 0, 0))
 
-    draw_noise(screen, noise_grid1, (0, 100))
-    draw_noise(screen, noise_grid2, (200, 100))
+    draw_noise(screen, noise_grid1, (0, 100), 2)
+    draw_noise(screen, noise_grid2, (200, 100), 2)
 
     pygame.display.update()
 
@@ -135,11 +135,11 @@ if __name__ == "__main__":
 
     from const import *
     
-    rows, columns = 10, 10
-    size = 10
+    rows, columns = 20, 4
+    size = 8
 
-    gnoise = GNoise((rows, columns))
-    noise_grid1 = gnoise.generate_noise(size)
+    gnoise = GNoise((WIDTH, HEIGHT))
+    noise_grid1 = gnoise.generate_noise(rows, columns, size)
 
     noise_grid2 = np.zeros((rows*size, columns*size))
     for row in range(noise_grid2.shape[0]):

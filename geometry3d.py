@@ -1,7 +1,7 @@
 import wireframe as wf
 import pygame
 import numpy as np
-from const import KEY_TO_FUNCTION
+from const import *
 
 class Geometry3D:
     """ Displays 3D objects on a Pygame screen """
@@ -20,46 +20,31 @@ class Geometry3D:
 
         self.wireframes.append(wireframe)
 
-    def getDisplaySQFaces(self, index=None):
+    def getDisplaySQFaces(self, offset=[0, 0]):
         faces = []
 
-        if index == None:
-            wf = self.wireframes
-        else:
-            wf = [self.wireframes[index]]
-
-        for wireframe in wf:
+        for wireframe in self.wireframes:
             for i in range(wireframe.nodes.shape[0]):
                     if (i+1) % 4 == 0 and i < len(wireframe.nodes):
-                        faces.append([wireframe.nodes[n1][:2] for n1, n2 in wireframe.edges[i-3:(i+1)]])
+                        faces.append([[wireframe.nodes[n1][X]+offset[X], wireframe.nodes[n1][Y]+offset[Y]] for n1, n2 in wireframe.edges[i-3:(i+1)]])
         
         return faces
 
-    def getDisplayEdges(self, index=None):
+    def getDisplayEdges(self, offset=[0, 0]):
         edges = []
 
-        if index == None:
-            wf = self.wireframes
-        else:
-            wf = [self.wireframes[index]]
-
-        for wireframe in wf:
+        for wireframe in self.wireframes:
             for n1, n2 in wireframe.edges:
                 edges.append((wireframe.nodes[n1][:2], wireframe.nodes[n2][:2]))
         
         return edges
 
-    def getDisplayNodes(self, index=None):
+    def getDisplayNodes(self, offset=[0, 0]):
         nodes = []
 
-        if index == None:
-            wf = self.wireframes
-        else:
-            wf = [self.wireframes[index]]
-
-        for wireframe in wf:
+        for wireframe in self.wireframes:
                 for node in wireframe.nodes:
-                    nodes.append((int(node[0]), int(node[1])))
+                    nodes.append((int(node[X]), int(node[Y])))
         
         return nodes
 
@@ -81,10 +66,9 @@ class Geometry3D:
     def rotateAll(self, axis, theta, center=None):
         """ Rotate all wireframe about their center, along a given axis by a given angle. """
 
+        if center == None:
+            center = find_center([find_center(wireframe.nodes)[:-1] for wireframe in self.wireframes])
         for wireframe in self.wireframes:
-            if center == None:
-                center = wf.Wireframe.findCenter(wireframe.nodes)
-
             wireframe.rotate(axis, center, theta)
 
 if __name__ == '__main__':

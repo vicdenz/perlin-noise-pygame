@@ -72,17 +72,6 @@ class Wireframe:
                 node[X] = cx + d * math.cos(theta)
                 node[Y] = cy + d * math.sin(theta)
 
-    @staticmethod
-    def findCenter(nodes):
-        """ Find the center of the wireframe. """
-
-        num_nodes = len(nodes)
-        meanX = sum([node[X] for node in nodes]) / num_nodes
-        meanY = sum([node[Y] for node in nodes]) / num_nodes
-        meanZ = sum([node[Z] for node in nodes]) / num_nodes
-
-        return (meanX, meanY, meanZ)
-
 if __name__ == "__main__":
     cube = Wireframe()
     cube_nodes = [(x,y,z) for x in (0,1) for y in (0,1) for z in (0,1)]
